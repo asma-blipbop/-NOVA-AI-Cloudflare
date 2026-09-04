@@ -1,0 +1,30 @@
+name: Import NOVA AI source
+
+on:
+  push:
+    paths:
+      - 'NOVA-AI-CLOUDFLARE-REBUILD.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract project
+        run: |
+          unzip -o NOVA-AI-CLOUDFLARE-REBUILD.zip -d /tmp/nova
+          cp -R /tmp/nova/. .
+          rm -f NOVA-AI-CLOUDFLARE-REBUILD.zip
+
+      - name: Commit extracted files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Add NOVA AI Cloudflare source' || echo 'Nothing to commit'
+          git push
